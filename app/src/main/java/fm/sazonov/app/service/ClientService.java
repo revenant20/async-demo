@@ -22,26 +22,26 @@ public class ClientService {
     private final ResponseMapper mapper;
 
     @SneakyThrows
-public Catalog getCatalog() {
-    var bookRequest = getRequest(BOOKS);
-    var bookResponse = httpClient.send(
-            bookRequest,
-            HttpResponse.BodyHandlers.ofByteArray()
-    );
-    var books = mapper.mapBooks(bookResponse.body());
+    public Catalog getCatalog() {
+        var bookRequest = getRequest(BOOKS);
+        var bookResponse = httpClient.send(
+                bookRequest,
+                HttpResponse.BodyHandlers.ofByteArray()
+        );
+        var books = mapper.mapBooks(bookResponse.body());
 
-    var authorRequest = getRequest(AUTHORS);
-    var authorResponse = httpClient.send(
-            authorRequest,
-            HttpResponse.BodyHandlers.ofByteArray()
-    );
-    var authors = mapper.mapAuthors(
-            authorResponse.body()
-    );
-    return Catalog.builder()
-            .authors(authors)
-            .books(books)
-            .build();
-}
+        var authorRequest = getRequest(AUTHORS);
+        var authorResponse = httpClient.send(
+                authorRequest,
+                HttpResponse.BodyHandlers.ofByteArray()
+        );
+        var authors = mapper.mapAuthors(
+                authorResponse.body()
+        );
+        return Catalog.builder()
+                .authors(authors)
+                .books(books)
+                .build();
+    }
 
 }

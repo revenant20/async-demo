@@ -22,21 +22,21 @@ public class RestTemplateClient {
 
     private final RestTemplate restTemplate;
 
-public List<Book> getBooks() {
-    var response = restTemplate.exchange(
-            getUri(BOOKS),
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            BookResponse.class).getBody();
-    return response.books();
-}
+    public List<Book> getBooks() {
+        var response = restTemplate.exchange(
+                getUri(BOOKS),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                BookResponse.class).getBody();
+        return response.books();
+    }
 
-public List<Author> getAuthors() {
-    var response = restTemplate.exchange(
-            getUri(AUTHORS),
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            AuthorsResponse.class).getBody();
-    return response.authors();
-}
+    public List<Author> getAuthors() {
+        var response = restTemplate.exchange(
+                getUri(AUTHORS),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                AuthorsResponse.class).getBody();
+        return response.authors();
+    }
 }
