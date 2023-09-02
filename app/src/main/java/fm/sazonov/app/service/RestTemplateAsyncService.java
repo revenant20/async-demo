@@ -5,7 +5,6 @@ import fm.sazonov.dto.AuthorsResponse;
 import fm.sazonov.dto.Book;
 import fm.sazonov.dto.BookResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Async;
@@ -26,16 +25,25 @@ public class RestTemplateAsyncService {
     private final RestTemplate restTemplate;
 
     @Async
-    @SneakyThrows
     public CompletableFuture<List<Book>> getBooks() {
-        var response = restTemplate.exchange(getUri(BOOKS), HttpMethod.GET, HttpEntity.EMPTY, BookResponse.class).getBody();
-        return CompletableFuture.completedFuture(response.books());
+        var response = restTemplate.exchange(
+                getUri(BOOKS),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                BookResponse.class).getBody();
+        return CompletableFuture
+                .completedFuture(response.books());
     }
 
     @Async
-    @SneakyThrows
     public CompletableFuture<List<Author>> getAuthors() {
-        var response = restTemplate.exchange(getUri(AUTHORS), HttpMethod.GET, HttpEntity.EMPTY, AuthorsResponse.class).getBody();
-        return CompletableFuture.completedFuture(response.authors());
+        var response = restTemplate.exchange(
+                getUri(AUTHORS),
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                AuthorsResponse.class).getBody();
+        return CompletableFuture
+                .completedFuture(response.authors());
     }
+
 }

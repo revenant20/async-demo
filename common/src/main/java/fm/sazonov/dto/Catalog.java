@@ -5,5 +5,5 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record FrontResponse (List<Book> books, List<Author> authors){
+public record Catalog(List<Book> books, List<Author> authors){
 }

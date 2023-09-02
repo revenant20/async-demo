@@ -3,7 +3,6 @@ package fm.sazonov.app.service;
 
 import fm.sazonov.dto.Catalog;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.net.http.HttpClient;
@@ -15,32 +14,27 @@ import static fm.sazonov.dto.Utils.getRequest;
 
 @Service
 @RequiredArgsConstructor
-public class ClientService {
+public class ClientAsyncService {
 
     private final HttpClient httpClient;
 
     private final ResponseMapper mapper;
 
-    @SneakyThrows
 public Catalog getCatalog() {
     var bookRequest = getRequest(BOOKS);
-    var bookResponse = httpClient.send(
+    var bookFuture = httpClient.sendAsync(
             bookRequest,
             HttpResponse.BodyHandlers.ofByteArray()
-    );
-    var books = mapper.mapBooks(bookResponse.body());
+    ).thenApply(mapper.mapBooks());
 
     var authorRequest = getRequest(AUTHORS);
-    var authorResponse = httpClient.send(
+    var authorFuture = httpClient.sendAsync(
             authorRequest,
             HttpResponse.BodyHandlers.ofByteArray()
-    );
-    var authors = mapper.mapAuthors(
-            authorResponse.body()
-    );
+    ).thenApply(mapper.mapAuthors());
     return Catalog.builder()
-            .authors(authors)
-            .books(books)
+            .authors(authorFuture.join())
+            .books(bookFuture.join())
             .build();
 }
 
