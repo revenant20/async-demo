@@ -21,7 +21,8 @@ public class ResponseMapper {
     public Function<HttpResponse<byte[]>, List<Book>> mapBooks() {
         return it -> {
             try {
-                return mapper.readValue(it.body(), new TypeReference<BookResponse>() {}).books();
+                return mapper.readValue(it.body(), new TypeReference<BookResponse>() {
+                }).books();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -31,23 +32,27 @@ public class ResponseMapper {
     public Function<HttpResponse<byte[]>, List<Author>> mapAuthors() {
         return it -> {
             try {
-                return mapper.readValue(it.body(), new TypeReference<AuthorsResponse>() {}).authors();
+                return mapper.readValue(it.body(), new TypeReference<AuthorsResponse>() {
+                }).authors();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         };
     }
 
-    public  List<Author> mapAuthors(byte[] body) {
+    public List<Author> mapAuthors(byte[] body) {
         try {
-            return mapper.readValue(body, new TypeReference<AuthorsResponse>() {}).authors();
+            return mapper.readValue(body, new TypeReference<AuthorsResponse>() {
+            }).authors();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    public  List<Book> mapBooks(byte[] body) {
+
+    public List<Book> mapBooks(byte[] body) {
         try {
-            return mapper.readValue(body, new TypeReference<BookResponse>() {}).books();
+            return mapper.readValue(body, new TypeReference<BookResponse>() {
+            }).books();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

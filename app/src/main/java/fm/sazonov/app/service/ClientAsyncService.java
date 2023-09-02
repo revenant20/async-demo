@@ -20,22 +20,22 @@ public class ClientAsyncService {
 
     private final ResponseMapper mapper;
 
-public Catalog getCatalog() {
-    var bookRequest = getRequest(BOOKS);
-    var bookFuture = httpClient.sendAsync(
-            bookRequest,
-            HttpResponse.BodyHandlers.ofByteArray()
-    ).thenApply(mapper.mapBooks());
+    public Catalog getCatalog() {
+        var bookRequest = getRequest(BOOKS);
+        var bookFuture = httpClient.sendAsync(
+                bookRequest,
+                HttpResponse.BodyHandlers.ofByteArray()
+        ).thenApply(mapper.mapBooks());
 
-    var authorRequest = getRequest(AUTHORS);
-    var authorFuture = httpClient.sendAsync(
-            authorRequest,
-            HttpResponse.BodyHandlers.ofByteArray()
-    ).thenApply(mapper.mapAuthors());
-    return Catalog.builder()
-            .authors(authorFuture.join())
-            .books(bookFuture.join())
-            .build();
-}
+        var authorRequest = getRequest(AUTHORS);
+        var authorFuture = httpClient.sendAsync(
+                authorRequest,
+                HttpResponse.BodyHandlers.ofByteArray()
+        ).thenApply(mapper.mapAuthors());
+        return Catalog.builder()
+                .authors(authorFuture.join())
+                .books(bookFuture.join())
+                .build();
+    }
 
 }
