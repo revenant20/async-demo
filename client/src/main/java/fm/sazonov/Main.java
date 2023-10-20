@@ -5,55 +5,53 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
 import static java.time.LocalTime.now;
 
 public class Main {
 
-    private static AtomicInteger num = new AtomicInteger(0);
-    private static HttpClient httpClient = HttpClient.newHttpClient();
+    public static final int END_EXCLUSIVE = 100;
+
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
 
     public static void main(String[] args) {
-        List<Long> results = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            long until = test();
-            results.add(until);
-        }
-        System.out.println(results.stream().flatMapToLong(LongStream::of).sum() / 20);
+        var start = now();
+        var averExTime = launch();
+        System.out.println("Average execution time = " + averExTime);
+        var end = now();
+        var amount = start.until(end, ChronoUnit.MILLIS);
+        System.out.println("all the time the requests are executed = " + amount);
     }
 
-    private static long test() {
-        LocalTime start = now();
-        IntStream.range(0, 1)
+    private static double launch() {
+        return IntStream.range(0, END_EXCLUSIVE)
                 .boxed()
+                .parallel()
                 .map(in -> doGetAsync())
-                .toList()
-                .forEach(httpResponseCompletableFuture -> {
-                    HttpResponse<String> join = httpResponseCompletableFuture.join();
-                    System.out.println(join.body() + num.incrementAndGet());
-                });
-        LocalTime end = now();
-        long until = start.until(end, ChronoUnit.SECONDS);
-        return until;
+                .mapToDouble(s -> (double)s)
+                .sum() / END_EXCLUSIVE;
     }
 
-    private static CompletableFuture<HttpResponse<String>> doGetAsync() {
+    private static long doGetAsync() {
         var request = HttpRequest.newBuilder()
                 .GET()
-                //.uri(URI.create("http://127.0.0.1:8080/"))
+                .uri(URI.create("http://127.0.0.1:8082/"))
                 //.uri(URI.create("http://127.0.0.1:8080/second"))
                 //.uri(URI.create("http://127.0.0.1:8080/third"))
-                .uri(URI.create("http://127.0.0.1:8080/fourths"))
+                //.uri(URI.create("http://127.0.0.1:8080/async-rt/catalog"))
+                //.uri(URI.create("http://127.0.0.1:8080/async-hc/v2/catalog"))
+                //.uri(URI.create("http://127.0.0.1:8080/async-hc/v1/catalog"))
+                //.uri(URI.create("http://127.0.0.1:8080/catalog"))
+                //.uri(URI.create("http://127.0.0.1:8080/s"))
                 .timeout(Duration.ofSeconds(60))
                 .build();
-        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        var start = now();
+        httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).join();
+        var end = now();
+        var until = start.until(end, ChronoUnit.MILLIS);
+        System.out.println("until = " + until);
+        return until;
     }
 }
